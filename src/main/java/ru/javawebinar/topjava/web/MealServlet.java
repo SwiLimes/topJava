@@ -1,7 +1,9 @@
 package ru.javawebinar.topjava.web;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import ru.javawebinar.topjava.model.Meal;
-import ru.javawebinar.topjava.storage.MealArrayStorage;
+import ru.javawebinar.topjava.storage.MemoryMealStorage;
 import ru.javawebinar.topjava.storage.Storage;
 import ru.javawebinar.topjava.util.MealsUtil;
 
@@ -12,29 +14,23 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.time.LocalDateTime;
-import java.time.Month;
 
 public class MealServlet extends HttpServlet {
-
-    private static final Storage<Meal> mealStorage = new MealArrayStorage();
+    private static final Logger logger = LoggerFactory.getLogger(MealServlet.class);
+    private Storage<Meal> mealStorage;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
+        logger.info("Init MealServlet");
         super.init(config);
-
-        mealStorage.add(new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 10, 0), "Завтрак", 500));
-        mealStorage.add(new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 13, 0), "Обед", 1000));
-        mealStorage.add(new Meal(LocalDateTime.of(2020, Month.JANUARY, 30, 20, 0), "Ужин", 500));
-        mealStorage.add(new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 0, 0), "Еда на граничное значение", 100));
-        mealStorage.add(new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 10, 0), "Завтрак", 1000));
-        mealStorage.add(new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 13, 0), "Обед", 500));
-        mealStorage.add(new Meal(LocalDateTime.of(2020, Month.JANUARY, 31, 20, 0), "Ужин", 410));
+        mealStorage = new MemoryMealStorage();
     }
 
     @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
         req.setCharacterEncoding("UTF-8");
 
+        logger.info("Process POST request");
         String id = req.getParameter("id");
         Meal meal = new Meal(
                 LocalDateTime.parse(req.getParameter("dateTime")),
@@ -43,16 +39,15 @@ public class MealServlet extends HttpServlet {
         if (id == null || id.isEmpty()) {
             mealStorage.add(meal);
         } else {
-            int i = Integer.parseInt(id);
-            mealStorage.update(i, meal);
+            meal.setId(Integer.parseInt(id));
+            mealStorage.update(meal);
         }
-        showList(req, resp);
+        redirectToRoot(resp);
     }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.setCharacterEncoding("UTF-8");
-
+        logger.info("Process GET request");
         String id = req.getParameter("id");
         String action = req.getParameter("action");
         if (action == null) {
@@ -61,23 +56,32 @@ public class MealServlet extends HttpServlet {
         }
 
         switch (action) {
-            case "create", "edit":
+            case "edit":
                 if (!(id == null || id.isEmpty())) {
                     req.setAttribute("meal", mealStorage.get(Integer.parseInt(id)));
                 }
                 break;
             case "delete":
                 mealStorage.remove(Integer.parseInt(id));
-                resp.sendRedirect("meals");
+                redirectToRoot(resp);
                 return;
             default:
-                throw new IllegalArgumentException("Action " + action + " does not exist!");
+                logger.error("Action {} does not exist!", action);
+                redirectToRoot(resp);
+                return;
         }
-        req.getRequestDispatcher("meals/edit.jsp").forward(req, resp);
+        logger.info("Forward to {} page", action.equals("create") ? "create" : "edit");
+        req.getRequestDispatcher("meals/editMeal.jsp").forward(req, resp);
     }
 
     private void showList(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.setAttribute("meals", MealsUtil.filteredByStreams(mealStorage.getAll()));
+        req.setAttribute("meals", MealsUtil.filteredByStreams(mealStorage.getAll(), MealsUtil.CALORIES_PER_DATE));
+        logger.info("Forward to meals");
         req.getRequestDispatcher("meals/meals.jsp").forward(req, resp);
+    }
+
+    private void redirectToRoot(HttpServletResponse resp) throws IOException {
+        logger.info("Redirect to meals");
+        resp.sendRedirect("meals");
     }
 }

@@ -14,7 +14,7 @@
 </head>
 <body>
 <a href="meals?action=create">Create meal</a><br><br>
-<span>Calories limit per date: <b><%=MealsUtil.CALORIES_PER_DATE%></b> </span>
+<span>Calories limit per date: <b>${MealsUtil.CALORIES_PER_DATE}</b> </span>
 <table style="width: 100%">
     <tr>
         <th>Date time</th>
@@ -22,10 +22,11 @@
         <th>Calories</th>
         <th colspan="2">Actions</th>
     </tr>
+    <c:set var="formatter" scope="request" value="${DateTimeFormatter.ofPattern('yyyy-MM-dd HH:mm')}"/>
     <jsp:useBean id="meals" scope="request" type="java.util.List"/>
     <c:forEach var="meal" items="${meals}">
         <tr style="color:${meal.excess ? 'red' : 'green'}">
-            <td style="text-align: center">${meal.dateTime.format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"))}</td>
+            <td style="text-align: center">${meal.dateTime.format(formatter)}</td>
             <td>${meal.description}</td>
             <td style="text-align: center">${meal.calories}</td>
             <td style="text-align: center"><a href="meals?action=edit&id=${meal.id}">Edit</a></td>

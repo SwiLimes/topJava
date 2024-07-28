@@ -6,11 +6,9 @@ import java.time.LocalTime;
 import java.util.Objects;
 
 public class Meal {
-    private Integer id;
+    private int id;
     private LocalDateTime dateTime;
-
     private String description;
-
     private int calories;
 
     public Meal() {
@@ -22,11 +20,11 @@ public class Meal {
         this.calories = calories;
     }
 
-    public Integer getId() {
+    public int getId() {
         return id;
     }
 
-    public void setId(Integer id) {
+    public void setId(int id) {
         this.id = id;
     }
 
@@ -66,22 +64,16 @@ public class Meal {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-
         Meal meal = (Meal) o;
-
-        if (calories != meal.calories) return false;
-        if (!Objects.equals(id, meal.id)) return false;
-        if (!dateTime.equals(meal.dateTime)) return false;
-        return description.equals(meal.description);
+        return calories == meal.calories
+                && Objects.equals(id, meal.id)
+                && Objects.equals(dateTime, meal.dateTime)
+                && Objects.equals(description, meal.description);
     }
 
     @Override
     public int hashCode() {
-        int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + dateTime.hashCode();
-        result = 31 * result + description.hashCode();
-        result = 31 * result + calories;
-        return result;
+        return Objects.hash(id, dateTime, description, calories);
     }
 
     @Override
