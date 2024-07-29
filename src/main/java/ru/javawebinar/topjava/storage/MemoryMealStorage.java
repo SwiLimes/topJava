@@ -55,12 +55,12 @@ public class MemoryMealStorage implements Storage<Meal> {
     @Override
     public Meal update(Meal meal) {
         int id = meal.getId();
-        Meal oldMeal = meals.get(id);
-        Meal updatedMeal = meals.computeIfPresent(id, (k, v) -> meal);
+        Meal updatedMeal = meals.computeIfPresent(id, (k, v) -> {
+            logger.info("Update meal with id {}. \nOld value: {}. \nNew value: {}", id, v, meal);
+            return meal;
+        });
         if (updatedMeal == null) {
             logger.warn("Updated meal with id {} does not exist!", id);
-        } else {
-            logger.info("Update meal with id {}. \nOld value: {}. \nNew value: {}", id, oldMeal, updatedMeal);
         }
         return updatedMeal;
     }
