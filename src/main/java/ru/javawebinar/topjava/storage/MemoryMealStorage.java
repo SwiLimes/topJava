@@ -15,7 +15,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class MemoryMealStorage implements Storage<Meal> {
     private static final Logger logger = LoggerFactory.getLogger(MemoryMealStorage.class);
-    private static final AtomicInteger ID_COUNTER = new AtomicInteger(0);
+    private final AtomicInteger idCounter = new AtomicInteger(0);
     private final Map<Integer, Meal> meals = new ConcurrentHashMap<>();
 
     public MemoryMealStorage() {
@@ -33,9 +33,10 @@ public class MemoryMealStorage implements Storage<Meal> {
     @Override
     public Meal add(Meal meal) {
         logger.info("Add new meal: {}", meal);
-        int id = ID_COUNTER.incrementAndGet();
+        int id = idCounter.incrementAndGet();
         meal.setId(id);
-        return meals.put(id, meal);
+        meals.put(id, meal);
+        return meal;
     }
 
     @Override
@@ -55,12 +56,13 @@ public class MemoryMealStorage implements Storage<Meal> {
     public Meal update(Meal meal) {
         int id = meal.getId();
         Meal oldMeal = meals.get(id);
-        if (oldMeal == null) {
-            logger.error("Updated meal does not exist!");
-            return null;
+        Meal updatedMeal = meals.computeIfPresent(id, (k, v) -> meal);
+        if (updatedMeal == null) {
+            logger.warn("Updated meal with id {} does not exist!", id);
+        } else {
+            logger.info("Update meal with id {}. \nOld value: {}. \nNew value: {}", id, oldMeal, updatedMeal);
         }
-        logger.info("Update meal with id {}. \nOld value: {}. \nNew value: {}", id, oldMeal, meal);
-        return meals.put(id, meal);
+        return updatedMeal;
     }
 
     @Override

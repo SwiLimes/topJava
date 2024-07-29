@@ -56,6 +56,7 @@ public class MealServlet extends HttpServlet {
         }
 
         switch (action) {
+            case "create":
             case "edit":
                 if (!(id == null || id.isEmpty())) {
                     req.setAttribute("meal", mealStorage.get(Integer.parseInt(id)));
