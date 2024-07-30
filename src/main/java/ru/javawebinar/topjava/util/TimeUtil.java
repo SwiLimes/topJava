@@ -15,8 +15,6 @@ public class TimeUtil {
     }
 
     public static boolean isBetweenHalfOpen(LocalTime lt, LocalTime startTime, LocalTime endTime) {
-        return startTime != null
-                ? (endTime != null ? isTimeAfterOrEquals(lt, startTime) && isTimeBefore(lt, endTime) : isTimeAfterOrEquals(lt, startTime))
-                : (endTime == null || isTimeBefore(lt, endTime));
+        return (startTime == null || isTimeAfterOrEquals(lt, startTime)) && (endTime == null || isTimeBefore(lt, endTime));
     }
 }
