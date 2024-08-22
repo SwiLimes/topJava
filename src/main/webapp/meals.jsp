@@ -14,6 +14,9 @@
         .excess {
             color: red;
         }
+        th, td {
+            text-align: center;
+        }
     </style>
 </head>
 <body>
@@ -21,6 +24,27 @@
     <h3><a href="index.html">Home</a></h3>
     <hr/>
     <h2>Meals</h2>
+
+    <form method="get" action="meals">
+        <input hidden name="action" value="filter">
+        <table style="width: 100%">
+            <tr>
+                <th>From date (including):</th>
+                <th>To date (including):</th>
+                <th>From time (including):</th>
+                <th>To time (including):</th>
+                <th></th>
+            </tr>
+            <tr>
+                <td><input type="date" name="fromDate"></td>
+                <td><input type="date" name="toDate"></td>
+                <td><input type="time" name="fromTime"></td>
+                <td><input type="time" name="toTime"></td>
+                <td><button type="submit">Filter</button></td>
+            </tr>
+        </table>
+    </form>
+
     <a href="meals?action=create">Add Meal</a>
     <br><br>
     <table border="1" cellpadding="8" cellspacing="0">
