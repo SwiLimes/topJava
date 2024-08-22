@@ -32,14 +32,14 @@
                 <th>From date (including):</th>
                 <th>To date (including):</th>
                 <th>From time (including):</th>
-                <th>To time (including):</th>
+                <th>To time:</th>
                 <th></th>
             </tr>
             <tr>
-                <td><input type="date" name="fromDate"></td>
-                <td><input type="date" name="toDate"></td>
-                <td><input type="time" name="fromTime"></td>
-                <td><input type="time" name="toTime"></td>
+                <td><input type="date" name="fromDate" value="${param.fromDate}"></td>
+                <td><input type="date" name="toDate" value="${param.toDate}"></td>
+                <td><input type="time" name="fromTime" value="${param.fromTime}"></td>
+                <td><input type="time" name="toTime" value="${param.toTime}"></td>
                 <td><button type="submit">Filter</button></td>
             </tr>
         </table>

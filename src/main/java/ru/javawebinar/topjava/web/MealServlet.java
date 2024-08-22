@@ -4,7 +4,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 import ru.javawebinar.topjava.model.Meal;
-import ru.javawebinar.topjava.util.MealsUtil;
 import ru.javawebinar.topjava.web.meal.MealRestController;
 
 import javax.servlet.ServletException;
@@ -27,7 +26,6 @@ public class MealServlet extends HttpServlet {
     public void init() {
         context = new ClassPathXmlApplicationContext("spring/spring-app.xml");
         controller = context.getBean(MealRestController.class);
-        MealsUtil.meals.forEach(controller::create);
     }
 
     @Override
@@ -39,15 +37,20 @@ public class MealServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException {
         request.setCharacterEncoding("UTF-8");
         String id = request.getParameter("id");
+        Integer mealId = id.isEmpty() ? null : Integer.valueOf(id);
+        Meal oldMeal = mealId != null ? controller.get(mealId) : null;
 
-        Meal meal = new Meal(id.isEmpty() ? null : Integer.valueOf(id),
-                null,
-                LocalDateTime.parse(request.getParameter("dateTime")),
+        Meal meal = new Meal(LocalDateTime.parse(request.getParameter("dateTime")),
                 request.getParameter("description"),
                 Integer.parseInt(request.getParameter("calories")));
-
         log.info(meal.isNew() ? "Create {}" : "Update {}", meal);
-        controller.create(meal);
+        if (oldMeal != null) {
+            meal.setId(oldMeal.getId());
+            meal.setUserId(oldMeal.getUserId());
+            controller.update(meal, mealId);
+        } else {
+            controller.create(meal);
+        }
         response.sendRedirect("meals");
     }
 
