@@ -16,8 +16,8 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Repository
 public class InMemoryMealRepository implements MealRepository {
@@ -42,6 +42,7 @@ public class InMemoryMealRepository implements MealRepository {
             repository.put(meal.getId(), meal);
             return meal;
         }
+        meal.setUserId(repository.get(meal.getId()).getUserId());
         return userId == meal.getUserId() ? repository.computeIfPresent(meal.getId(), (id, oldMeal) -> meal) : null;
     }
 
@@ -49,11 +50,11 @@ public class InMemoryMealRepository implements MealRepository {
     public boolean delete(int id, int userId) {
         log.info("delete {}", id);
         AtomicBoolean isExist = new AtomicBoolean(false);
-        Meal meal = repository.computeIfPresent(id, (i, m) -> {
-            isExist.set(true);
-            return m.getUserId() == userId ? null : m;
+        repository.computeIfPresent(id, (i, m) -> {
+            isExist.set(m.getUserId() == userId);
+            return isExist.get() ? null : m;
         });
-        return meal == null && isExist.get();
+        return isExist.get();
     }
 
     @Override
@@ -65,22 +66,22 @@ public class InMemoryMealRepository implements MealRepository {
 
     @Override
     public List<Meal> getAll(int userId) {
-        return getAllFiltered(userId, meal -> true);
+        log.info("getAll");
+        return getAllFiltered(userId, null, null);
     }
 
     @Override
     public List<Meal> getBetween(int userId, LocalDateTime start, LocalDateTime end) {
-        return getAllFiltered(userId, meal -> DateTimeUtil.isBetweenHalfOpen(meal.getDateTime(), start, end));
+        log.info("getBetween");
+        return getAllFiltered(userId, start, end);
     }
 
-    @Override
-    public List<Meal> getAllFiltered(int userId, Predicate<Meal> filter) {
-        log.info("getAll");
-        return repository.values().stream()
-                .filter(meal -> meal.getUserId() == userId)
-                .filter(filter)
-                .sorted(Comparator.comparing(Meal::getDateTime).reversed())
-                .collect(Collectors.toList());
+    private List<Meal> getAllFiltered(int userId, LocalDateTime start, LocalDateTime end) {
+        Stream<Meal> stream = repository.values().stream().filter(meal -> meal.getUserId() == userId);
+        if (start != null && end != null) {
+            stream = stream.filter(meal -> DateTimeUtil.isBetweenHalfOpen(meal.getDateTime(), start, end));
+        }
+        return stream.sorted(Comparator.comparing(Meal::getDateTime).reversed()).collect(Collectors.toList());
     }
 }
 

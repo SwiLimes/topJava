@@ -38,18 +38,15 @@ public class MealServlet extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
         String id = request.getParameter("id");
         Integer mealId = id.isEmpty() ? null : Integer.valueOf(id);
-        Meal oldMeal = mealId != null ? controller.get(mealId) : null;
-
         Meal meal = new Meal(LocalDateTime.parse(request.getParameter("dateTime")),
                 request.getParameter("description"),
                 Integer.parseInt(request.getParameter("calories")));
+
         log.info(meal.isNew() ? "Create {}" : "Update {}", meal);
-        if (oldMeal != null) {
-            meal.setId(oldMeal.getId());
-            meal.setUserId(oldMeal.getUserId());
-            controller.update(meal, mealId);
-        } else {
+        if (mealId == null) {
             controller.create(meal);
+        } else {
+            controller.update(meal, mealId);
         }
         response.sendRedirect("meals");
     }

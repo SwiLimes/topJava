@@ -5,7 +5,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.model.Role;
 import ru.javawebinar.topjava.model.User;
-import ru.javawebinar.topjava.util.MealsUtil;
+import ru.javawebinar.topjava.repository.inmemory.InMemoryMealRepository;
 import ru.javawebinar.topjava.web.meal.MealRestController;
 import ru.javawebinar.topjava.web.user.AdminRestController;
 
@@ -20,14 +20,11 @@ public class SpringMain {
             adminUserController.create(new User(null, "userName", "email@mail.ru", "password", Role.ADMIN));
 
             MealRestController mealController = appCtx.getBean(MealRestController.class);
-            MealsUtil.meals.forEach(mealController::create);
 
             mealController.getAll().forEach(System.out::println);
             Meal meal = mealController.get(2);
-            System.out.println(meal);
-            mealController.delete(2);
-            mealController.update(new Meal(meal.getDateTime(), meal.getDescription(), meal.getCalories()), 3);
-            mealController.getAll().forEach(System.out::println);
+            InMemoryMealRepository bean = appCtx.getBean(InMemoryMealRepository.class);
+            bean.save(new Meal(meal.getId(), meal.getDateTime(), meal.getDescription(), meal.getCalories(), 2), 2);
         }
     }
 }
