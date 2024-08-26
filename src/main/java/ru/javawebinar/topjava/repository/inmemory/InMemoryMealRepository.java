@@ -9,7 +9,6 @@ import ru.javawebinar.topjava.util.DateTimeUtil;
 import ru.javawebinar.topjava.util.MealsUtil;
 
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -28,8 +27,8 @@ public class InMemoryMealRepository implements MealRepository {
         //admin meals
         MealsUtil.meals.forEach(meal -> save(meal, 1));
         //user meals
-        save(new Meal(LocalDateTime.now().truncatedTo(ChronoUnit.HOURS), "user meal1", 500), 2);
-        save(new Meal(LocalDateTime.now().truncatedTo(ChronoUnit.HOURS), "user meal2", 2000), 2);
+        save(new Meal(LocalDateTime.of(2024, 8, 22, 15, 0), "user meal1", 500), 2);
+        save(new Meal(LocalDateTime.of(2024, 8, 22, 18, 0), "user meal2", 2000), 2);
     }
 
     @Override
@@ -54,7 +53,8 @@ public class InMemoryMealRepository implements MealRepository {
     @Override
     public Meal get(int id, int userId) {
         log.info("get {}", id);
-        return repository.get(userId).get(id);
+        Map<Integer, Meal> userMeals = repository.get(userId);
+        return userMeals != null ? userMeals.get(id) : null;
     }
 
     @Override
@@ -70,7 +70,7 @@ public class InMemoryMealRepository implements MealRepository {
     }
 
     private List<Meal> getAllFiltered(int userId, Predicate<Meal> filter) {
-        return repository.get(userId).values().stream()
+        return repository.getOrDefault(userId, new ConcurrentHashMap<>()).values().stream()
                 .filter(filter)
                 .sorted(Comparator.comparing(Meal::getDateTime).reversed())
                 .collect(Collectors.toList());
