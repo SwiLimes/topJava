@@ -24,7 +24,7 @@ public class SpringMain {
             mealController.getAll().forEach(System.out::println);
             Meal meal = mealController.get(2);
             InMemoryMealRepository bean = appCtx.getBean(InMemoryMealRepository.class);
-            bean.save(new Meal(meal.getId(), meal.getDateTime(), meal.getDescription(), meal.getCalories(), 2), 2);
+            bean.save(new Meal(meal.getId(), meal.getDateTime(), meal.getDescription(), meal.getCalories()), 2);
         }
     }
 }

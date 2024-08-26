@@ -42,10 +42,11 @@ public class MealServlet extends HttpServlet {
                 request.getParameter("description"),
                 Integer.parseInt(request.getParameter("calories")));
 
-        log.info(meal.isNew() ? "Create {}" : "Update {}", meal);
         if (mealId == null) {
+            log.info("Create {}", meal);
             controller.create(meal);
         } else {
+            log.info("Update meal {} with id {}", meal, mealId);
             controller.update(meal, mealId);
         }
         response.sendRedirect("meals");
