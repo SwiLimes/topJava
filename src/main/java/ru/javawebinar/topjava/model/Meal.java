@@ -13,6 +13,7 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -24,7 +25,7 @@ import java.time.LocalTime;
         @NamedQuery(name = Meal.GET_BETWEEN, query = "FROM Meal m WHERE m.user.id=:userId AND m.dateTime>=:startDateTime AND m.dateTime<:endDateTime ORDER BY m.dateTime DESC ")
 })
 @Entity
-@Table(name = "meal", uniqueConstraints = {@UniqueConstraint(columnNames = {"id", "date_time"})})
+@Table(name = "meal", uniqueConstraints = {@UniqueConstraint(columnNames = {"user_id", "date_time"})})
 public class Meal extends AbstractBaseEntity {
     public static final String DELETE = "Meal.delete";
     public static final String GET = "Meal.get";
@@ -34,9 +35,12 @@ public class Meal extends AbstractBaseEntity {
     @Column(name = "date_time", nullable = false)
     @NotNull
     private LocalDateTime dateTime;
+
     @Column(name = "description", nullable = false)
     @NotBlank
+    @Size(min = 2, max = 120)
     private String description;
+
     @Column(name = "calories", nullable = false)
     @Range(min = 10, max = 10000)
     private int calories;

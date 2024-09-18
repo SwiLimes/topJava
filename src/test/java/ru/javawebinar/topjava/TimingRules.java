@@ -12,6 +12,7 @@ import java.util.concurrent.TimeUnit;
 public class TimingRules {
     private static final Logger logger = LoggerFactory.getLogger("results");
     private static final StringBuilder results = new StringBuilder();
+
     public static final Stopwatch STOPWATCH = new Stopwatch() {
         @Override
         protected void finished(long nanos, Description description) {
@@ -20,7 +21,9 @@ public class TimingRules {
             logger.info("{}ms\n", result);
         }
     };
+
     private static final String DELIMITER = String.join("", Collections.nCopies(105, "-"));
+
     public static final ExternalResource SUMMARY = new ExternalResource() {
         @Override
         protected void before() {
