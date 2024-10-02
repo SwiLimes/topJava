@@ -4,6 +4,7 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 import ru.javawebinar.topjava.model.Meal;
 import ru.javawebinar.topjava.repository.MealRepository;
@@ -26,6 +27,11 @@ public class MealService {
 
     public Meal get(int id, int userId) {
         return checkNotFoundWithId(repository.get(id, userId), id);
+    }
+
+    @Transactional
+    public Meal getWithUser(int id, int userId) {
+        return checkNotFoundWithId(repository.getWithUser(id, userId), id);
     }
 
     @CacheEvict(value = "meals", allEntries = true)
