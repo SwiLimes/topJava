@@ -15,7 +15,7 @@ public interface CrudUserRepository extends JpaRepository<User, Integer> {
     @Query("DELETE FROM User u WHERE u.id=:id")
     int delete(@Param("id") int id);
 
-    @Query("SELECT u FROM User u JOIN FETCH u.meals WHERE u.id = :id")
+    @Query("SELECT u FROM User u LEFT OUTER JOIN FETCH u.meals WHERE u.id = :id")
     User getWithMeals(@Param("id") int id);
 
     User getByEmail(String email);

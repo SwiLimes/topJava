@@ -14,6 +14,7 @@ public class SpringMain {
         try (ConfigurableApplicationContext appCtx = new ClassPathXmlApplicationContext(new String[]{"spring/spring-app.xml", "spring/spring-db.xml"}, false)) {
             appCtx.getEnvironment().setActiveProfiles(
                     Profiles.getActiveDbProfile(), Profiles.REPOSITORY_IMPLEMENTATION);
+            appCtx.refresh();
 
             MealRestController mealController = appCtx.getBean(MealRestController.class);
             System.out.println(mealController.getAll());
