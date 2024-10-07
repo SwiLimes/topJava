@@ -18,7 +18,6 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 
-@Repository
 public abstract class JdbcMealRepository<T> implements MealRepository {
 
     private static final RowMapper<Meal> ROW_MAPPER = BeanPropertyRowMapper.newInstance(Meal.class);
@@ -31,7 +30,6 @@ public abstract class JdbcMealRepository<T> implements MealRepository {
 
     protected abstract T convertToDbDateTime(LocalDateTime localDateTime);
 
-    @Autowired
     protected JdbcMealRepository(JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
         this.insertMeal = new SimpleJdbcInsert(jdbcTemplate)
                 .withTableName("meal")
@@ -44,6 +42,7 @@ public abstract class JdbcMealRepository<T> implements MealRepository {
     @Repository
     @Profile(Profiles.POSTGRES_DB)
     public static class LocalDateTimeJdbcMealRepository extends JdbcMealRepository<LocalDateTime>{
+        @Autowired
         public LocalDateTimeJdbcMealRepository(JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
             super(jdbcTemplate, namedParameterJdbcTemplate);
         }
@@ -57,6 +56,7 @@ public abstract class JdbcMealRepository<T> implements MealRepository {
     @Repository
     @Profile(Profiles.HSQL_DB)
     public static class TimestampJdbcMealRepository extends JdbcMealRepository<Timestamp> {
+        @Autowired
         public TimestampJdbcMealRepository(JdbcTemplate jdbcTemplate, NamedParameterJdbcTemplate namedParameterJdbcTemplate) {
             super(jdbcTemplate, namedParameterJdbcTemplate);
         }

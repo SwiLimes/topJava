@@ -30,13 +30,11 @@ public class DataJpaUserServiceTest extends AbstractUserServiceTest {
 
     @Test
     public void getNotFoundWithMeals() {
-        //Получение WithMeals несуществующего пользователя
         Assert.assertThrows(NotFoundException.class, () -> service.getWithMeals(NOT_FOUND));
     }
 
     @Test
     public void getWithEmptyMeals() {
-        //Получение WithMeals пользователя, у которого нет еды, т.е. guest (ожидание - пользователь с пустым списком meals)
         User user = service.getWithMeals(GUEST_ID);
         USER_MATCHER.assertMatch(user, guest);
         MEAL_MATCHER.assertMatch(user.getMeals(), Collections.emptyList());
