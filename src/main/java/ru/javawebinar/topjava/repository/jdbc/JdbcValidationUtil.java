@@ -7,10 +7,10 @@ import javax.validation.Validation;
 import javax.validation.Validator;
 import java.util.Set;
 
-public class JdbcValidation {
+public class JdbcValidationUtil {
     private static final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
 
-    private JdbcValidation() {}
+    private JdbcValidationUtil() {}
 
     public static <T> void validate(T obj) {
         Set<ConstraintViolation<T>> violations = validator.validate(obj);

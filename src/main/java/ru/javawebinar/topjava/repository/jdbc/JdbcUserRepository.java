@@ -44,7 +44,7 @@ public class JdbcUserRepository implements UserRepository {
     @Override
     @Transactional
     public User save(User user) {
-        JdbcValidation.validate(user);
+        JdbcValidationUtil.validate(user);
         BeanPropertySqlParameterSource parameterSource = new BeanPropertySqlParameterSource(user);
 
         if (user.isNew()) {
@@ -56,7 +56,6 @@ public class JdbcUserRepository implements UserRepository {
                        UPDATE users SET name=:name, email=:email, password=:password, 
                        registered=:registered, enabled=:enabled, calories_per_day=:caloriesPerDay WHERE id=:id
                     """, parameterSource) == 0) {
-                saveRoles(user);
                 return null;
             }
             updateRoles(user);
@@ -91,7 +90,6 @@ public class JdbcUserRepository implements UserRepository {
             int userId = rs.getInt("user_id");
             Set<Role> roles = userRoles.computeIfAbsent(userId, id -> EnumSet.noneOf(Role.class));
             roles.add(Role.valueOf(rs.getString("role")));
-            userRoles.put(userId, roles);
         });
         users.forEach(user -> user.setRoles(userRoles.get(user.getId())));
         return users;
