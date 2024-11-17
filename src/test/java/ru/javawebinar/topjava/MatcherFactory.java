@@ -30,6 +30,10 @@ public class MatcherFactory {
                 (actual, excepted) -> assertThat(actual).isEqualTo(excepted));
     }
 
+    public static <T> Matcher<T> usingAssertions(Class<T> clazz, BiConsumer<T, T> assertion, BiConsumer<Iterable<T>, Iterable<T>> iterableAssertion) {
+        return new Matcher<>(clazz, assertion, iterableAssertion);
+    }
+
     public static class Matcher<T> {
         private final Class<T> clazz;
         private final BiConsumer<T, T> assertion;
