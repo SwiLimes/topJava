@@ -16,9 +16,9 @@ import static ru.javawebinar.topjava.model.AbstractBaseEntity.START_SEQ;
 public class UserTestData {
     public static final MatcherFactory.Matcher<User> USER_MATCHER = MatcherFactory.usingIgnoringFieldsComparator(User.class, "registered", "meals");
     public static final MatcherFactory.Matcher<User> USER_WITH_MEALS_MATCHER = MatcherFactory.usingAssertions(User.class,
-            (actual, excepted) -> assertThat(actual).usingRecursiveComparison()
-                    .ignoringFields("registered", "meals.user").isEqualTo(excepted),
-            (actual, excepted) -> {
+            (actual, expected) -> assertThat(actual).usingRecursiveComparison()
+                    .ignoringFields("registered", "meals.user").isEqualTo(expected),
+            (actual, expected) -> {
                 throw new UnsupportedOperationException();
             });
 
@@ -30,7 +30,7 @@ public class UserTestData {
     public static final User user = new User(USER_ID, "User", "user@yandex.ru", "password", Role.USER);
     public static final User userWithMeals = new User(user, meals);
     public static final User admin = new User(ADMIN_ID, "Admin", "admin@gmail.com", "admin", Role.ADMIN, Role.USER);
-    public static final User adminWithMeals = new User(user, List.of(adminMeal2, adminMeal1));
+    public static final User adminWithMeals = new User(admin, List.of(adminMeal2, adminMeal1));
     public static final User guest = new User(GUEST_ID, "Guest", "guest@gmail.com", "guest");
 
     public static User getNew() {
