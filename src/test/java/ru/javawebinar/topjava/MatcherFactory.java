@@ -20,14 +20,14 @@ import static org.assertj.core.api.Assertions.assertThat;
 public class MatcherFactory {
     public static <T> Matcher<T> usingIgnoringFieldsComparator(Class<T> clazz, String... fieldsToIgnore) {
         return new Matcher<>(clazz,
-                (actual, excepted) -> assertThat(actual).usingRecursiveComparison().ignoringFields(fieldsToIgnore).isEqualTo(excepted),
-                (actual, excepted) -> assertThat(actual).usingRecursiveFieldByFieldElementComparatorIgnoringFields(fieldsToIgnore).isEqualTo(excepted));
+                (actual, expected) -> assertThat(actual).usingRecursiveComparison().ignoringFields(fieldsToIgnore).isEqualTo(expected),
+                (actual, expected) -> assertThat(actual).usingRecursiveFieldByFieldElementComparatorIgnoringFields(fieldsToIgnore).isEqualTo(expected));
     }
 
     public static <T> Matcher<T> usingEqualsComparator(Class<T> clazz) {
         return new Matcher<>(clazz,
-                (actual, excepted) -> assertThat(actual).isEqualTo(excepted),
-                (actual, excepted) -> assertThat(actual).isEqualTo(excepted));
+                (actual, expected) -> assertThat(actual).isEqualTo(expected),
+                (actual, expected) -> assertThat(actual).isEqualTo(expected));
     }
 
     public static <T> Matcher<T> usingAssertions(Class<T> clazz, BiConsumer<T, T> assertion, BiConsumer<Iterable<T>, Iterable<T>> iterableAssertion) {
