@@ -12,10 +12,46 @@
 <div class="jumbotron pt-4">
     <div class="container">
         <h3 class="text-center"><spring:message code="meal.title"/></h3>
+        <div class="card border-dark">
+            <div class="card-body pb-0">
+                <form id="filter">
+                    <div class="row">
+                        <div class="col-3">
+                            <label for="startDate"><spring:message code="meal.startDate"/></label>
+                            <input type="date" class="form-control" id="startDate" name="startDate">
+                        </div>
+                        <div class="col-3">
+                            <label for="startTime"><spring:message code="meal.startTime"/></label>
+                            <input type="time" class="form-control" id="startTime" name="startDate">
+                        </div>
+                        <div class="col-3">
+                            <label for="endDate"><spring:message code="meal.endDate"/></label>
+                            <input type="date" class="form-control" id="endDate" name="endDate">
+                        </div>
+                        <div class="col-3">
+                            <label for="endTime"><spring:message code="meal.endTime"/></label>
+                            <input type="time" class="form-control" id="endTime" name="endTime">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="card-footer text-right">
+                <div class="btn btn-danger" onclick="clearFilter()">
+                    <span class="fa fa-remove"></span>
+                    <spring:message code="common.cancel"/>
+                </div>
+                <div class="btn btn-primary" onclick="ctx.updateTable()">
+                    <span class="fa fa-filter"></span>
+                    <spring:message code="meal.filter"/>
+                </div>
+            </div>
+        </div>
+        <br/>
         <button class="btn btn-primary" onclick="add()">
             <span class="fa fa-plus"></span>
             <spring:message code="common.add"/>
         </button>
+        <br/>
         <table class="table table-striped" id="datatable">
             <thead>
             <tr>
