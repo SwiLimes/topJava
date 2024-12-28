@@ -80,6 +80,6 @@ public abstract class AbstractControllerTest {
     }
 
     protected ResultMatcher detailMessage(String code) {
-        return jsonPath("$.details").value(getMessage(code));
+        return jsonPath("$.info").value(getMessage(code));
     }
 }

@@ -30,8 +30,8 @@ import static ru.javawebinar.topjava.util.exception.ErrorType.*;
 public class ExceptionInfoHandler {
     private static final Logger log = LoggerFactory.getLogger(ExceptionInfoHandler.class);
 
-    public static final String EXCEPTION_DUPLICATE_EMAIL = "exception.user.duplicateEmail";
-    public static final String EXCEPTION_DUPLICATE_DATETIME = "exception.meal.duplicateDateTime";
+    public static final String EXCEPTION_DUPLICATE_EMAIL = "user.exception.duplicateEmail";
+    public static final String EXCEPTION_DUPLICATE_DATETIME = "meal.exception.duplicateDateTime";
 
     private static final Map<String, String> CONSTRAINTS_I18N_MAP = Map.of(
             "users_unique_email_idx", EXCEPTION_DUPLICATE_EMAIL,
